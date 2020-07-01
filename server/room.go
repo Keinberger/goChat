@@ -69,15 +69,17 @@ func listRooms() string {
 		if k == 0 {
 			continue
 		}
-		roo += v.name + ", "
-		i++
+		if v.name != "" {
+			roo += v.name + ", "
+			i++
+		}
 	}
 	if roo == "" {
 		return "No rooms found"
 	}
 	roo = strings.TrimSpace(roo)
 	roo = strings.Trim(roo, ",")
-	roo += "(" + strconv.Itoa(i) + ")"
+	roo += " (" + strconv.Itoa(i) + ")"
 	return roo
 }
 

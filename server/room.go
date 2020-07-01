@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -63,17 +64,20 @@ func deleteRoomIfEmpty(roomID int) {
 // listRoom() returns a list of all rooms
 func listRooms() string {
 	var roo string
+	var i int
 	for k, v := range rooms {
 		if k == 0 {
 			continue
 		}
 		roo += v.name + ", "
+		i++
 	}
 	if roo == "" {
 		return "No rooms found"
 	}
 	roo = strings.TrimSpace(roo)
 	roo = strings.Trim(roo, ",")
+	roo += "(" + strconv.Itoa(i) + ")"
 	return roo
 }
 

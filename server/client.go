@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/big"
 	"net"
 	"strconv"
 
@@ -108,10 +109,10 @@ func (c *client) isInsideRoom() bool {
 // enableEncryption() method enables the RSA encryption for a client
 func (c *client) enableEncryption(nn, aa int) {
 	c.publicKey = rsa.PublicKey{
-		N: nn,
-		A: aa,
+		N: big.NewInt(int64(nn)),
+		A: big.NewInt(int64(aa)),
 	}
-	writeConn(c, "/servermessage keys "+strconv.Itoa(publicKey.N)+" "+strconv.Itoa(publicKey.A))
+	writeConn(c, "/servermessage keys "+strconv.Itoa(int(publicKey.N.Int64()))+" "+strconv.Itoa(int(publicKey.A.Int64())))
 	c.encryption = true
 	writeConn(c, "Traffic is now RSA encrypted")
 }

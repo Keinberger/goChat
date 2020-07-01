@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math/big"
 	"net"
 	"os"
 	"os/exec"
@@ -37,8 +38,8 @@ func setServerKeys(keys string) {
 	nn, _ := strconv.Atoi(split[2])
 	aa, _ := strconv.Atoi(split[3])
 	serverPublicKey = rsa.PublicKey{
-		N: nn,
-		A: aa,
+		N: big.NewInt(int64(nn)),
+		A: big.NewInt(int64(aa)),
 	}
 	encryption = true
 }
@@ -46,7 +47,7 @@ func setServerKeys(keys string) {
 func enableEncryption(conn net.Conn) {
 	privateKey = rsa.GeneratePrivateKey()
 	publicKey = rsa.GetPublicKey(privateKey)
-	fmt.Fprintf(conn, "/enableEncryption "+strconv.Itoa(publicKey.N)+" "+strconv.Itoa(publicKey.A)+"\n")
+	fmt.Fprintf(conn, "/enableEncryption "+strconv.Itoa(int(publicKey.N.Int64()))+" "+strconv.Itoa(int(publicKey.A.Int64()))+"\n")
 }
 
 func handleReply(conn net.Conn) {

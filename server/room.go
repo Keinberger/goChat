@@ -6,12 +6,14 @@ import (
 	"time"
 )
 
+// room defines the data structure for a room
 type room struct {
 	name    string
 	clients []*client
 	chat    chan string
 }
 
+// getRoomID returns the ID of room name
 func getRoomID(name string) int {
 	var key int
 	for k, v := range rooms {
@@ -23,6 +25,7 @@ func getRoomID(name string) int {
 	return key
 }
 
+// createRoom creates a new room named nam
 func createRoom(c *client, nam string) {
 	if strings.Contains(listRooms(), nam) {
 		writeConn(c, "Room already exists")
@@ -38,6 +41,7 @@ func createRoom(c *client, nam string) {
 	go deleteRoomIfEmpty(getRoomID(nam))
 }
 
+// deleteRoomIfEmpty() deletes a room with id roomID if it is empty
 func deleteRoomIfEmpty(roomID int) {
 	time.Sleep(time.Second * 30)
 	userInside := false
@@ -56,6 +60,7 @@ func deleteRoomIfEmpty(roomID int) {
 	rooms[roomID] = room{}
 }
 
+// listRoom() returns a list of all rooms
 func listRooms() string {
 	var roo string
 	for k, v := range rooms {
@@ -67,26 +72,31 @@ func listRooms() string {
 	if roo == "" {
 		return "No rooms found"
 	}
+	roo = strings.TrimSpace(roo)
+	roo = strings.Trim(roo, ",")
 	return roo
 }
 
+// checkRoomMessages() checks the channel of a room for messages and sends the message to the client.conn
 func checkRoomMessages(client *client) {
 Y:
 	for {
 		select {
 		case msg := <-rooms[client.currentRoomID].chat:
 			writeConn(client, msg)
-			if msg == client.nick+leaveMessage {
+			if msg == client.nick+conf.LeaveMessage {
 				break Y
 			}
 		}
 	}
 }
 
+// sendRoomMessage() send a message msg to channel ch
 func sendRoomMessage(ch chan string, msg string) {
 	ch <- msg
 }
 
+// sendRoomMessageAnalog() sends a mesage msg of room with id roomID to all clients in the room
 func sendRoomMessageAnalog(sender *client, msg string, roomID int) {
 	for _, c := range rooms[roomID].clients {
 		if c.nick == "" || sender == c {

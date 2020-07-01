@@ -1,0 +1,7 @@
+{
+    "leaveMessage": " left the chat",
+    "commandMessage": {
+      "title": "Succesfully connected to Safe Messanger\n",
+      "text": "List of commands:\n/nick <name> Change your nick\n/join <room> Join a room\n/room See current room\n/rooms List all rooms\n/leave Leave current room\n/createRoom <name> Create a new room\n/commands List all commands\n/encrypted Shows if conenction is encrypted\n"
+    }
+  }

@@ -1,19 +1,40 @@
 package main
 
 import (
-	"bufio"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"strconv"
 	"strings"
 	"sync"
 
-	"github.com/philippkeinberger/OwnProjects/rsa/rsa"
+	rsa "github.com/philippkeinberger/OwnProjects/goRSA"
 )
 
+// Config defines the structure of the config.json file
+type Config struct {
+	LeaveMessage string `json:"leaveMessage"`
+	CommandMSG   `json:"commandMessage"`
+}
+
+// CommandMSG defines the structure of the welcome message, including the title and commandMessage
+type CommandMSG struct {
+	Title string `json:"title"`
+	Text  string `json:"text"`
+}
+
+// initialise() sets all default variables for the server
 func initialise() {
-	leaveMessage = " left the chat"
-	commandMessage = "List of commands:\n/nick <name> Change your nick\n/join <room> Join a room\n/room See current room\n/rooms List all rooms\n/leave Leave current room\n/createRoom <name> Create a new room\n/commands List all commands\n/encrypted Shows if conenction is encrypted\n"
+	content, err := ioutil.ReadFile(configFilePath)
+	if err != nil {
+		panic(err)
+	}
+	err = json.Unmarshal(content, &conf)
+	if err != nil {
+		panic(err)
+	}
+
 	wg = &sync.WaitGroup{}
 	room := room{
 		name: "Home",
@@ -27,31 +48,7 @@ func initialise() {
 	fmt.Println("Succesfully started server on port: " + port)
 }
 
-func writeConn(c *client, msg string) {
-	if c.encryption {
-		encrypted := rsa.EncryptBytes([]byte(msg), c.publicKey)
-		send := []byte(string(encrypted) + ".")
-		c.conn.Write(send)
-	} else {
-		c.conn.Write([]byte(msg + "."))
-	}
-}
-
-func handleConnection(conn net.Conn) {
-	client := newClient(conn)
-
-	// listen for user input sent to the server
-	scanner := bufio.NewScanner(conn)
-	for scanner.Scan() {
-		input := scanner.Text()
-		go checkInput(input, client)
-	}
-
-	// encrypt traffic with RSA
-
-	conn.Close()
-}
-
+// checkInput() checks the input string for client and handles it
 func checkInput(input string, client *client) {
 	if len(input) < 1 {
 		return
@@ -105,7 +102,7 @@ func checkInput(input string, client *client) {
 		case "close":
 			client.close()
 		case "commands":
-			writeConn(client, commandMessage)
+			writeConn(client, conf.CommandMSG.Text)
 		case "encrypted":
 			writeConn(client, strconv.FormatBool(client.encryption))
 		default:
@@ -120,10 +117,10 @@ var (
 	publicKey      rsa.PublicKey
 	privateKey     rsa.PrivateKey
 	userCount      int
-	leaveMessage   string
-	commandMessage string
 	wg             *sync.WaitGroup
 	port           string = "9000"
+	configFilePath string = "config.json"
+	conf           Config
 )
 
 func main() {

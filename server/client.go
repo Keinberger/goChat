@@ -5,9 +5,10 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/philippkeinberger/OwnProjects/rsa/rsa"
+	rsa "github.com/philippkeinberger/OwnProjects/goRSA"
 )
 
+// client defines the data of a client
 type client struct {
 	nick          string
 	currentRoomID int
@@ -16,6 +17,8 @@ type client struct {
 	conn          net.Conn
 }
 
+// newClient() returns a new client having the standard data types inside
+// and sends a welcome message to the clientconnection
 func newClient(c net.Conn) *client {
 	userName := "anonymous" + strconv.Itoa(userCount)
 	fmt.Printf("New User(%v) joined\n", userName)
@@ -24,11 +27,12 @@ func newClient(c net.Conn) *client {
 		currentRoomID: 0,
 		conn:          c,
 	}
-	writeConn(cl, "Succesfully connected to Safe Messanger\n"+commandMessage)
+	writeConn(cl, conf.CommandMSG.Title+conf.CommandMSG.Text)
 	clients = append(clients, cl)
 	return cl
 }
 
+// setNick() method changes the nick of a client to string name
 func (c *client) setNick(name string) {
 	for _, v := range rooms[c.currentRoomID].clients {
 		if v.nick == name {
@@ -40,6 +44,7 @@ func (c *client) setNick(name string) {
 	writeConn(c, "Changed nick to: "+name)
 }
 
+// join() method lets a client join chatRoom name
 func (c *client) join(name string) {
 	id := getRoomID(name)
 	if id == 0 {
@@ -70,6 +75,7 @@ func (c *client) join(name string) {
 	go checkRoomMessages(c)
 }
 
+// leave() method lets the client leave the current chatRoom
 func (c *client) leave() {
 	if c.isInsideRoom() {
 		var key int
@@ -94,10 +100,12 @@ func (c *client) leave() {
 	}
 }
 
+// isInsideRoom() method returns true if the client is inside of a chatRoom
 func (c *client) isInsideRoom() bool {
 	return c.currentRoomID != 0
 }
 
+// enableEncryption() method enables the RSA encryption for a client
 func (c *client) enableEncryption(nn, aa int) {
 	c.publicKey = rsa.PublicKey{
 		N: nn,
@@ -108,6 +116,7 @@ func (c *client) enableEncryption(nn, aa int) {
 	writeConn(c, "Traffic is now RSA encrypted")
 }
 
+// close() method closes the current client connection to the server
 func (c *client) close() {
 	if c.isInsideRoom() {
 		c.leave()

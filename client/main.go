@@ -9,37 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/philippkeinberger/OwnProjects/rsa/rsa"
+	rsa "github.com/philippkeinberger/OwnProjects/goRSA"
 )
-
-func sendToServer(conn net.Conn, text string) {
-	if encryption {
-		bef := strings.Trim(text, "\n")
-		encr := rsa.EncryptBytes([]byte(bef), serverPublicKey)
-		encrypted := string(encr) + "\n"
-
-		fmt.Fprintf(conn, encrypted)
-	} else {
-		fmt.Fprintf(conn, text)
-	}
-}
-
-func setServerKeys(keys string) {
-	split := strings.Split(keys, " ")
-	nn, _ := strconv.Atoi(split[2])
-	aa, _ := strconv.Atoi(split[3])
-	serverPublicKey = rsa.PublicKey{
-		N: nn,
-		A: aa,
-	}
-	encryption = true
-}
-
-func enableEncryption(conn net.Conn) {
-	privateKey = rsa.GeneratePrivateKey()
-	publicKey = rsa.GetPublicKey(privateKey)
-	fmt.Fprintf(conn, "/enableEncryption "+strconv.Itoa(publicKey.N)+" "+strconv.Itoa(publicKey.A)+"\n")
-}
 
 func executeCommand(cmd string, conn net.Conn) {
 	cmd = strings.TrimSpace(cmd)
@@ -59,6 +30,23 @@ func clear() {
 	cmd := exec.Command("clear")
 	cmd.Stdout = os.Stdout
 	cmd.Run()
+}
+
+func setServerKeys(keys string) {
+	split := strings.Split(keys, " ")
+	nn, _ := strconv.Atoi(split[2])
+	aa, _ := strconv.Atoi(split[3])
+	serverPublicKey = rsa.PublicKey{
+		N: nn,
+		A: aa,
+	}
+	encryption = true
+}
+
+func enableEncryption(conn net.Conn) {
+	privateKey = rsa.GeneratePrivateKey()
+	publicKey = rsa.GetPublicKey(privateKey)
+	fmt.Fprintf(conn, "/enableEncryption "+strconv.Itoa(publicKey.N)+" "+strconv.Itoa(publicKey.A)+"\n")
 }
 
 func handleReply(conn net.Conn) {
@@ -94,6 +82,18 @@ Y:
 	fmt.Print(inputPhrase)
 }
 
+func sendToServer(conn net.Conn, text string) {
+	if encryption {
+		bef := strings.Trim(text, "\n")
+		encr := rsa.EncryptBytes([]byte(bef), serverPublicKey)
+		encrypted := string(encr) + "\n"
+
+		fmt.Fprintf(conn, encrypted)
+	} else {
+		fmt.Fprintf(conn, text)
+	}
+}
+
 var (
 	exit            bool
 	inputPhrase     string
@@ -104,6 +104,9 @@ var (
 )
 
 func main() {
+	if len(os.Args) < 2 {
+		panic("You have to specify the server and port")
+	}
 	args := os.Args[1:]
 	conn, err := net.Dial("tcp", args[0]+":"+args[1])
 	if err != nil {

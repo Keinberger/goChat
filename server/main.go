@@ -96,7 +96,9 @@ func checkInput(input string, client *client) {
 		case "rooms":
 			writeConn(client, listRooms())
 		case "createroom":
-			createRoom(client, split[1])
+			if len(split) > 1 {
+				createRoom(client, split[1])
+			}
 		case "leave":
 			client.leave()
 		case "close":

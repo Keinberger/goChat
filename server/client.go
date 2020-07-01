@@ -48,7 +48,7 @@ func (c *client) setNick(name string) {
 func (c *client) join(name string) {
 	id := getRoomID(name)
 	if id == 0 {
-		writeConn(c, "Channel not found")
+		writeConn(c, "Room not found")
 		return
 	}
 	c.currentRoomID = id

@@ -19,7 +19,9 @@ func executeCommand(cmd string, conn net.Conn) {
 	case "clear":
 		clear()
 	case "enableencryption":
-		enableEncryption(conn)
+		if !encryption {
+			enableEncryption(conn)
+		}
 	default:
 		fmt.Print("Unknown client command\n")
 		fmt.Print(inputPhrase)

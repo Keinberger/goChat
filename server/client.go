@@ -35,11 +35,9 @@ func newClient(c net.Conn) *client {
 
 // setNick() method changes the nick of a client to string name
 func (c *client) setNick(name string) {
-	for _, v := range rooms[c.currentRoomID].clients {
-		if v.nick == name {
-			writeConn(c, "Nick already in use")
-			return
-		}
+	if rooms[c.currentRoomID].nickTaken(name) {
+		writeConn(c, "Nick already in use")
+		return
 	}
 	c.nick = name
 	writeConn(c, "Changed nick to: "+name)
@@ -52,6 +50,11 @@ func (c *client) join(name string) {
 		writeConn(c, "Room not found")
 		return
 	}
+	if rooms[id].nickTaken(c.nick) {
+		writeConn(c, "Nick already in use")
+		return
+	}
+
 	c.currentRoomID = id
 	rooms[c.currentRoomID].clients = append(rooms[c.currentRoomID].clients, c)
 

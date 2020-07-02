@@ -45,8 +45,8 @@ func createRoom(c *client, nam string) {
 // deleteRoomIfEmpty() deletes a room with id roomID if it is empty
 func deleteRoomIfEmpty(roomID int) {
 	time.Sleep(time.Second * 30)
-	userInside := false
 	for {
+		userInside := false
 		for _, v := range rooms[roomID].clients {
 			if v.nick != "" {
 				userInside = true
@@ -81,6 +81,16 @@ func listRooms() string {
 	roo = strings.Trim(roo, ",")
 	roo += " (" + strconv.Itoa(i) + ")"
 	return roo
+}
+
+// nickTaken() mehtod checks if a nick name is already taken inside of room r
+func (r *room) nickTaken(name string) bool {
+	for _, v := range r.clients {
+		if name == v.nick {
+			return true
+		}
+	}
+	return false
 }
 
 // checkRoomMessages() checks the channel of a room for messages and sends the message to the client.conn

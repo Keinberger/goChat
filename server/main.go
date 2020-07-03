@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync"
 
-	rsa "github.com/philippkeinberger/OwnProjects/goRSA"
+	rsa "github.com/keinberger/goRSA"
 )
 
 // Config defines the structure of the config.json file

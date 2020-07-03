@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"net"
 
-	rsa "github.com/philippkeinberger/OwnProjects/goRSA"
+	rsa "github.com/keinberger/goRSA"
 )
 
 // writeConn writes msg to the connection of client c

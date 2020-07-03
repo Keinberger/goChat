@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	rsa "github.com/philippkeinberger/OwnProjects/goRSA"
+	rsa "github.com/keinberger/goRSA"
 )
 
 func executeCommand(cmd string, conn net.Conn) {
@@ -62,11 +62,8 @@ Y:
 		}
 
 		switch {
-		case strings.Contains(message, "Joined room: "):
+		case strings.Contains(message, "Joined room: ") || strings.Contains(message, "You left"):
 			//inputPhrase = "Send text: "
-			clear()
-		case strings.Contains(message, "You left"):
-			//inputPhrase = "Command: "
 			clear()
 		case strings.Contains(message, "/servermessage keys"):
 			setServerKeys(message)

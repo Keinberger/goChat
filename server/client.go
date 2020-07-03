@@ -6,7 +6,7 @@ import (
 	"net"
 	"strconv"
 
-	rsa "github.com/philippkeinberger/OwnProjects/goRSA"
+	rsa "github.com/keinberger/goRSA"
 )
 
 // client defines the data of a client
@@ -96,7 +96,7 @@ func (c *client) leave() {
 		sendRoomMessageAnalog(c, c.nick+" left the room", c.currentRoomID)
 
 		// send message to channel
-		// sendRoomMessage(rooms[c.currentRoomID].chat, c.nick + " left the channel")
+		// sendRoomMessage(rooms[c.currentRoomID].chat, c.nick + " left the room")
 
 		c.currentRoomID = 0
 	} else {

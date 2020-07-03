@@ -44,8 +44,8 @@ func createRoom(c *client, nam string) {
 
 // deleteRoomIfEmpty() deletes a room with id roomID if it is empty
 func deleteRoomIfEmpty(roomID int) {
-	time.Sleep(time.Second * 30)
 	for {
+		time.Sleep(time.Second * 30)
 		userInside := false
 		for _, v := range rooms[roomID].clients {
 			if v.nick != "" {

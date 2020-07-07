@@ -13,6 +13,7 @@ import (
 	rsa "github.com/keinberger/goRSA"
 )
 
+// executeCommand() executes a client command
 func executeCommand(cmd string, conn net.Conn) {
 	cmd = strings.TrimSpace(cmd)
 	switch strings.ToLower(cmd) {
@@ -35,6 +36,7 @@ func clear() {
 	cmd.Run()
 }
 
+// setServerKeys() stores the server public key on the local machine
 func setServerKeys(keys string) {
 	split := strings.Split(keys, " ")
 	nn, _ := strconv.Atoi(split[2])
@@ -46,12 +48,14 @@ func setServerKeys(keys string) {
 	encryption = true
 }
 
+// enableEncryption() gets called by user input and generates a privateKey and publicKey, which it shares with the server
 func enableEncryption(conn net.Conn) {
 	privateKey = rsa.GeneratePrivateKey()
 	publicKey = rsa.GetPublicKey(privateKey)
 	fmt.Fprintf(conn, "/enableEncryption "+strconv.Itoa(int(publicKey.N.Int64()))+" "+strconv.Itoa(int(publicKey.A.Int64()))+"\n")
 }
 
+// handleReply() looks for any messages on the connection conn and prints them out afterwards, except the exceptions
 func handleReply(conn net.Conn) {
 Y:
 	for {
@@ -82,6 +86,7 @@ Y:
 	fmt.Print(inputPhrase)
 }
 
+// sendToServer() sends a string text to the connection conn
 func sendToServer(conn net.Conn, text string) {
 	if encryption {
 		bef := strings.Trim(text, "\n")

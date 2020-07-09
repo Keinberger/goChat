@@ -2,19 +2,19 @@
 
 ## Requirements
 
-The program requires a Unix System (Linux/macOS) or Go11 or newer.
+The program requires a Unix System (Linux/macOS) or Go11/newer.
 
 ## Usage
 
 ### Setting up a Server
 
-Run 'go run main.go' or './server' inside of server/ and the program will automatically start a new server on port :9000 for you. It will log all the commands and/or messages that get sent to the server, same with deletion of chats and other important logs.
+Run `go run main.go` or `./server` inside of server/ and the program will automatically start a new server on port :9000 for you. It will log all the commands and/or messages that get sent to the server, same with deletion of chats and other important logs.
 
 You may change the welcome message inside of config.json.
 
 ### Using the client
 
-Run 'go run *.go ip port' or './client ip port' (e.g. go run *.go localhost 9000) inside of client/. If the client succesfully connected to the server, you can see all the commands one can send to the server or use for the client.
+Run `go run *.go ip port` or `./client ip port` (e.g. `go run *.go localhost 9000`) inside of client/. If the client succesfully connected to the server, you can see all the commands one can send to the server or use for the client.
 
 Server commands start with '/' and will get sent to the server and be processed there.
 

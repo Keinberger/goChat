@@ -9,13 +9,14 @@ import (
 
 // writeConn writes msg to the connection of client c
 func writeConn(c *client, msg string) {
+	var sendMsg []byte
 	if c.encryption {
 		encrypted := rsa.EncryptBytes([]byte(msg), c.publicKey)
-		send := []byte(string(encrypted) + ".")
-		c.conn.Write(send)
+		sendMsg = []byte(string(encrypted) + ".")
 	} else {
-		c.conn.Write([]byte(msg + "."))
+		sendMsg = []byte(msg + ".")
 	}
+	c.conn.Write(sendMsg)
 }
 
 // handleConnection() creates a new client checks for any messages on connection conn
